@@ -10,10 +10,13 @@ usage () {
     echo "$PROGNAME usage: TBD"
 }
 
-while [[ -n "$1" ]]; do
-    source="$1"
-    shift
-done
+if [[ -z "$1" ]]; then
+    echo -e "${RED}[ERROR]${NC} Please enter the name of the script to copy"
+    exit 1
+fi
+
+source="$1"
+shift
 
 # run with sudo
 if [[ "$EUID" -ne 0 ]]; then
@@ -22,13 +25,13 @@ if [[ "$EUID" -ne 0 ]]; then
 fi
 
 # make sure the script exists
-if [[ ! -f ${script_path}/${source} ]]; then
-    echo -e "${RED}[ERROR]${NC} ${script_path}/${source} does not exist. Exiting..."
+if [[ ! -f ${script_path}${source} ]]; then
+    echo -e "${RED}[ERROR]${NC} ${script_path}${source} does not exist. Exiting..."
     exit 1
 fi
 
 echo -e "Copying ${script_path}${source} to ${copies_path}${source}"
-cp ${script_path}/${source} ${copies_path}/${source}
+cp ${script_path}${source} ${copies_path}${source}
 
 echo "Script copied. Exiting..."
 exit
