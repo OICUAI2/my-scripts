@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# time-track: CLI to track time spent doing tasks
+
+PROGNAME="$(basename "$0")"
+LOGFILE="ttt.txt"
+
+usage () {
+    echo "$PROGNAME usage: TBD"
+}
+
+checkFile () {
+    if [[ ! -f "$HOME"/"$LOGFILE" ]]; then
+        echo "log file doesn't exist!"
+        exit
+    fi
+}
+
+logStart () {
+    # append space, then activity, then timestamp to logfile
+    checkfile
+    echo "" >> "$LOGFILE"
+    echo $activity >> "$LOGFILE"
+    timestamp=`date`
+    echo "$timestamp" >> "$LOGFILE"
+    output="now logging ${activity} started at ${timestamp}"
+    echo "$output"
+    echo "Exiting"
+    exit 0
+}
+
+logEnd () {
+   activity=`tail -2 "$HOME"/"$LOGFILE" | head -n 1`
+   timestamp=`date`
+   echo "$timestamp" >> "$HOME"/"$LOGFILE"
+   output="ending ${activity} at ${timestamp}"
+   echo "$output"
+   exit 0
+}
+
+while [[ -n "$1" ]]; do
+    case "$1" in
+	-s | --start)		logStart
+				exit 0
+				;;
+	-e | --end)		logEnd
+		                exit 0
+				;;
+        -a | --activity)	shift
+		                activity="$1"
+				;;
+	-h | --help)		usage
+				exit 0
+				;;
+	*)			usage
+	                        exit 1
+    esac
+    shift
+done

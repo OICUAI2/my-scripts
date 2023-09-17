@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# new-script: simple script to init file for new script
+
+PROGNAME="$(basename "$0")"
+path="/usr/local/bin/" # add option to specify path
+filename="default"
+SHEBANG="#!/bin/bash"
+
+usage () {
+    echo "$PROGNAME usage: TBD"
+}
+
+# use here doc (I/O redirection) to embed a body of text into the script
+# and feed it into standar input of a command (here input shebang into
+# cat command
+set_up_bash () {
+    cat << _EOF_
+    $SHEBANG
+_EOF_
+}
+
+# iterate through cl option args
+# ^todo^ add input validate to options with input
+while [[ -n "$1" ]]; do
+    case "$1" in
+        -n | --name)    shift
+                        filename="$1"
+                        ;;
+        -h | --help)    usage
+                        exit 0
+                        ;;
+        *)              echo "unknown option: $1" # ^todo^ add "see man page" once man page exists
+                        usage >&2
+                        exit 1
+    esac
+    shift
+done
+
+# make sure script is run with root priv
+if [ "$EUID" -ne 0 ]; then
+    RED='\033[0;31m'
+    NC='\033[0m'
+    echo -e "${RED}[ERROR]${NC} Please run with sudo"
+  exit
+fi
+
+echo "creating $filename script at $path"
+# not including sudo in script, should be run with sudo command
+touch "$filename"
+chmod +r "$filename"
+echo "$SHEBANG" > "$filename"
+mv "$filename" "$path$filename"
+chmod 755 "$path$filename"
+
+echo "$filename created. Terminating."
+exit

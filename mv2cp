@@ -1,0 +1,39 @@
+#!/bin/bash
+
+PROGNAME="$(basename "$0")"
+RED='\033[0;31m'
+NC='\033[0m'
+script_path="/usr/local/bin/"
+copies_path="/home/cmscott/projects/script_copies/"
+
+usage () {
+    echo "$PROGNAME usage: TBD"
+}
+
+while [[ -n "$1" ]]; do
+    source="$1"
+    shift
+done
+
+# run with sudo
+if [[ "$EUID" -ne 0 ]]; then
+    echo -e "${RED}[ERROR]${NC} Please run with sudo"
+    exit
+fi
+
+# make sure the script exists
+if [[ ! -f ${script_path}/${source} ]]; then
+    echo -e "${RED}[ERROR]${NC} ${script_path}/${source} does not exist. Exiting..."
+    exit 1
+fi
+
+echo -e "Copying ${script_path}${source} to ${copies_path}${source}"
+cp ${script_path}/${source} ${copies_path}/${source}
+
+echo "Script copied. Exiting..."
+exit
+
+
+
+
+
